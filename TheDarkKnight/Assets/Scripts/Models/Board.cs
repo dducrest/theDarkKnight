@@ -31,6 +31,7 @@ public class Board {
 		return null;
 	}
 
+	//Returns the first piece at a position
 	public Piece getPieceAt(Vector2 pos) {
 		foreach (Piece p in Pieces) {
 			if(p.Pos == pos)
@@ -39,11 +40,25 @@ public class Board {
 		
 		return null;
 	}
+	
+	
+	public List<Piece> getPiecesAt(Vector2 pos) {
+		List<Piece> list= new List<Piece>();
+		foreach (Piece p in Pieces) {
+			if(p.Pos == pos)
+				list.Add(p);
+		}
+		
+		return list;
+	}
 
 	// Return NULL if no piece in space
 	public Piece getPieceAt(int col, int row) {
-		Vector2 pos = Piece.makePos(col,row);
-		return getPieceAt(pos);
+		return getPieceAt(Piece.makePos(col,row));
+	}
+	
+	public List<Piece> getPiecesAt(int col, int row) {
+		return getPiecesAt(Piece.makePos(col,row));
 	}
 
 	public void movePieceTo(Piece p, Vector2 pos) {

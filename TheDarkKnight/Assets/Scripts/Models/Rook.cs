@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Rook : Enemy {
+public class Rook : ActivePiece {
 	
 	public Rook(): base() {
 		

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class King : Enemy {
+public class King : ActivePiece {
 	
 	public King(): base() {
 		

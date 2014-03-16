@@ -57,10 +57,10 @@ public class ActionMenu_SimpleAlt : MonoBehaviour, ActionMenu {
 		ShowHighlight= false;
 	}
 	
-	
+	public int GUILevelOffset= -10;
 	void OnGUI() {
 		int guiLevel= GUI.depth;
-		//GUI.depth= guiLevel-1;
+		GUI.depth= GUILevelOffset;
 		
 		if(Show) { 
 			int menuSize= (int)(boardToScreen.getCellSize()/3f);

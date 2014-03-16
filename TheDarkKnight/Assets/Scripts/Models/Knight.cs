@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Knight : Enemy {
+public class Knight : ActivePiece {
 
 	public Knight(): base() {
 		

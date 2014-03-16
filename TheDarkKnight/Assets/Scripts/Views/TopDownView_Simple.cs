@@ -1,30 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class TopDownView_Simple : MonoBehaviour, CellSelector, BoardToScreen {
+public class TopDownView_Simple : MonoBehaviour, iBoardView{
 
-	public Board board;
+	protected Board board;
+	public Board Board { 
+		get { return board; }
+		set { 
+			board= value;
+		}
+	}
 
 	// Use this for initialization
 	void Start () {
 	
 	}
+	
+	public void updateView() {
+	
+	}
 
-
+	public int GUILevelOffset=5;
 	void OnGUI() {
+		int depth= GUI.depth;
+		GUI.depth= GUILevelOffset;
 		for (int col=0; col< board.Columns; col++) {
 			for(int row=0; row< board.Rows; row++) {
-				Piece p= board.getPieceAt(col, row);
-				if(p == null) {
-					drawButton( col,  row, "");
-				}
-				else {
-					if ( p is Enemy ) {
-						Enemy e= (Enemy)p;
-						if(e.State == Enemy.EnemyState.ALERT) 
+				bool drawAPiece= false;
+				foreach(Piece p in board.getPiecesAt(col, row) ) {
+					drawAPiece=true;
+					if ( p is ActivePiece ) {
+						ActivePiece e= (ActivePiece)p;
+						if(e.State == ActivePiece.ActivePieceState.ALERT) 
 							drawButton( col,  row, p.Type.ToString() + "\nALERTED");
-						else if(e.State == Enemy.EnemyState.IDLE)
+						else if(e.State == ActivePiece.ActivePieceState.IDLE)
 							drawButton( col,  row, p.Type.ToString());
+						else if(e.State == ActivePiece.ActivePieceState.DEAD)
+							drawButton( col,  row, "");
 					}
 					else {
 						drawButton( col,  row, p.Type.ToString());
@@ -34,8 +47,13 @@ public class TopDownView_Simple : MonoBehaviour, CellSelector, BoardToScreen {
 						drawHighlightFor(p);					
 					}
 				}
+				
+				if(!drawAPiece) {
+					drawButton( col,  row, "");
+				}
 			}
 		}
+		GUI.depth= depth;
 	}
 
 	public int getCellSize() {

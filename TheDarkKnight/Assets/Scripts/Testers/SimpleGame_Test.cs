@@ -24,7 +24,7 @@ public class SimpleGame_Tester: MonoBehaviour {
 
 
 		// View Setup
-		view.board = board;
+		view.Board = board;
 		view.onCellSelect+= this.onMove;
 		
 				

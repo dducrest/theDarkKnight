@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Pawn : Enemy {
+public class Pawn : ActivePiece {
 	
 	public Pawn(): base() {
 		

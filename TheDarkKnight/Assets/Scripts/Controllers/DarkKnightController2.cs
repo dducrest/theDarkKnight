@@ -20,6 +20,7 @@ public class DarkKnightController2: DarkKnightControllerInterface  {
 		}
 	}
 	
+	
 	protected ActionMenu actionMenu;
 	public ActionMenu ActionMenu {
 		get{ return actionMenu; }
@@ -54,6 +55,7 @@ public class DarkKnightController2: DarkKnightControllerInterface  {
 	}
 	
 	public void onCellSelect( int col, int row) {
+		Debug.Log("DarkKnightController2.onCellSelect");
 	
 		//if cell empty, then try to move batman
 		//if cell full && not batman && can attack, then attack
@@ -86,17 +88,22 @@ public class DarkKnightController2: DarkKnightControllerInterface  {
 			}
 			clearHighlights();
 		}
+		
 	}
 	
 	
 	private void onMove(ActionMenu sender) {
+		Debug.Log("DarkKnightController2.onMove");
 		Piece p = board.getPieceAt (sender.SelectedCell);
 		//Debug.Log ("onCellSelect - selected unit: " + p.Type.ToString());
 		if(board.getBatman().canMoveTo(board, sender.SelectedCell)) {
 			clearHighlights();
 			board.movePieceTo( board.getBatman(), sender.SelectedCell);
 			if(p != null) {
-				board.removePiece(p);
+				
+				//board.removePiece(p);
+				if(p is ActivePiece)
+					((ActivePiece)p).State= ActivePiece.ActivePieceState.DEAD;
 				testWin();
 			}
 			
@@ -106,6 +113,7 @@ public class DarkKnightController2: DarkKnightControllerInterface  {
 			testAlert();
 		}
 	}
+	
 	
 	private void onCancelAction(ActionMenu sender) {
 		actionMenu.hide();
@@ -123,12 +131,13 @@ public class DarkKnightController2: DarkKnightControllerInterface  {
 		List<Piece> pieces= new List<Piece>(board.Pieces);
 		Batman batman= board.getBatman();
 		foreach(Piece p in pieces) {
-			if(p != batman && p is Enemy) {
-				Enemy e= (Enemy)p;
-				if(e.State == Enemy.EnemyState.ALERT) {
+			if(p != batman && p is ActivePiece) {
+				ActivePiece e= (ActivePiece)p;
+				if(e.State == ActivePiece.ActivePieceState.ALERT) {
 					if(batman != null && e.canMoveTo(board, batman.Pos)) { //If you can attack the batman, do so
 						board.movePieceTo(e, batman.Pos);
-						board.removePiece(batman);
+						//board.removePiece(batman);
+						//batman.State= Piece.ActivePieceState.Dead;
 						if(onBatmanDead != null)
 							onBatmanDead();
 	
@@ -146,14 +155,20 @@ public class DarkKnightController2: DarkKnightControllerInterface  {
 	protected void testAlert() {
 		Batman batman= board.getBatman();
 		foreach(Piece p in board.Pieces) {
-			if(p != batman && p is Enemy) {
-				Enemy e= (Enemy)p;
-				if(batman != null && e.canMoveTo(board, batman.Pos)) {   //Its the Bat, get 'im!!
-					e.State= Enemy.EnemyState.ALERT;
-					e.TargetPos= batman.Pos;
+			if(p != batman && p is ActivePiece) {
+				ActivePiece e= (ActivePiece)p;
+				if( e.State == ActivePiece.ActivePieceState.IDLE) {
+					if(batman != null && e.canMoveTo(board, batman.Pos)) {   //Its the Bat, get 'im!!
+						e.State= ActivePiece.ActivePieceState.ALERT;
+						e.TargetPos= batman.Pos;
+					}
 				}
-				else    //Cannot see the Batman, go idle
-					e.State= Enemy.EnemyState.IDLE;
+				else if(e.State == ActivePiece.ActivePieceState.ALERT) {   //Cannot see the Batman, go idle
+						e.State= ActivePiece.ActivePieceState.IDLE;
+				}
+				//else if( e.State == ActivePiece.ActivePieceState.DEAD) { //stay dead
+				//	;	
+				//}
 			}
 		}
 	}

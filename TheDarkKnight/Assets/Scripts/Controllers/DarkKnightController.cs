@@ -69,9 +69,9 @@ public class DarkKnightController : DarkKnightControllerInterface {
 		List<Piece> pieces= new List<Piece>(board.Pieces);
 		Batman batman= board.getBatman();
 		foreach(Piece p in pieces) {
-			if(p != batman && p is Enemy) {
-				Enemy e= (Enemy)p;
-				if(e.State == Enemy.EnemyState.ALERT) {
+			if(p != batman && p is ActivePiece) {
+				ActivePiece e= (ActivePiece)p;
+				if(e.State == ActivePiece.ActivePieceState.ALERT) {
 					if(batman != null && e.canMoveTo(board, batman.Pos)) {
 						board.movePieceTo(e, batman.Pos);
 						board.removePiece(batman);
@@ -88,12 +88,12 @@ public class DarkKnightController : DarkKnightControllerInterface {
 	protected void testAlert() {
 		Batman batman= board.getBatman();
 		foreach(Piece p in board.Pieces) {
-			if(p != batman && p is Enemy) {
-				Enemy e= (Enemy)p;
+			if(p != batman && p is ActivePiece) {
+				ActivePiece e= (ActivePiece)p;
 				if(batman != null && e.canMoveTo(board, batman.Pos))
-					e.State= Enemy.EnemyState.ALERT;
+					e.State= ActivePiece.ActivePieceState.ALERT;
 				else
-					e.State= Enemy.EnemyState.IDLE;
+					e.State= ActivePiece.ActivePieceState.IDLE;
 			}
 		}
 	}

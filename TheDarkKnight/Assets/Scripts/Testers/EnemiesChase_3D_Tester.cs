@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class EnemiesChase_Tester : MonoBehaviour {
+public class EnemiesChase_3D_Tester : MonoBehaviour {
 
 	public Vector2 BoardSize= new Vector2(8,8);
-	public MonoBehaviour ViewMono;
-	protected iBoardView view;
+	public MonoBehaviour[] ViewsMono;
+	protected iBoardView[] views;
+	protected iBoardView defaultView {
+		get { return views[PreferredView]; }
+	}
+	public int PreferredView=0;
+	
 	public MonoBehaviour actionMenuMono;
 	protected ActionMenu actionMenu;
 	public DarkKnightController2 controller= new DarkKnightController2();
@@ -29,16 +34,20 @@ public class EnemiesChase_Tester : MonoBehaviour {
 		
 		
 		// View Setup
-		view= (iBoardView)ViewMono;
-		view.Board = board;
-		view.onCellSelect+= this.onMove;
+		views= new iBoardView[ViewsMono.Length];
+		for(int x=0; x< ViewsMono.Length; x++)
+		{
+			views[x]= (iBoardView)(ViewsMono[x]);
+			views[x].Board = board;
+			views[x].onCellSelect+= this.onMove;
+		}
 		
 		actionMenu= (ActionMenu)actionMenuMono;
-		actionMenu.BoardToScreen= view;
+		actionMenu.BoardToScreen= defaultView;
 		
 		
 		//Controller Setup
-		controller.Selector= view;
+		controller.Selector= defaultView;
 		controller.Board= board;
 		controller.ActionMenu= actionMenu;
 		controller.onBatmanWin+= roundWin;
@@ -84,33 +93,33 @@ public class EnemiesChase_Tester : MonoBehaviour {
 		{
 			if(win)
 			{
-				Vector2 endGame= view.convertCellToScreen( new Vector2(board.Columns+1, 0));
-				GUI.TextArea(new Rect(endGame.x, endGame.y, Screen.width- endGame.x - view.getCellSize(), view.getCellSize()), "The Dark Knight has cleared the city!");
+				Vector2 endGame= defaultView.convertCellToScreen( new Vector2(board.Columns+1, 0));
+				GUI.TextArea(new Rect(endGame.x, endGame.y, Screen.width- endGame.x - defaultView.getCellSize(), defaultView.getCellSize()), "The Dark Knight has cleared the city!");
 			
 			}
 			else 
 			{
-				Vector2 endGame= view.convertCellToScreen( new Vector2(board.Columns+1, 0));
-				GUI.TextArea(new Rect(endGame.x, endGame.y, Screen.width- endGame.x - view.getCellSize(), view.getCellSize()), "The Dark Knight has fallen!\nTry Again.");
+				Vector2 endGame= defaultView.convertCellToScreen( new Vector2(board.Columns+1, 0));
+				GUI.TextArea(new Rect(endGame.x, endGame.y, Screen.width- endGame.x - defaultView.getCellSize(), defaultView.getCellSize()), "The Dark Knight has fallen!\nTry Again.");
 			}
 		}
 		
-		Vector2 resetButton= view.convertCellToScreen( new Vector2(board.Columns+1, 2));
-		if(GUI.Button(new Rect(resetButton.x, resetButton.y, Screen.width- resetButton.x - view.getCellSize(), view.getCellSize()),"Reset"))
+		Vector2 resetButton= defaultView.convertCellToScreen( new Vector2(board.Columns+1, 2));
+		if(GUI.Button(new Rect(resetButton.x, resetButton.y, Screen.width- resetButton.x - defaultView.getCellSize(), defaultView.getCellSize()),"Reset"))
 			Application.LoadLevel("EnemiesChase");
 		
 		
-		Vector2 boardEdge= view.convertCellToScreen( new Vector2(board.Columns+1, 3));
+		Vector2 boardEdge= defaultView.convertCellToScreen( new Vector2(board.Columns+1, 3));
 		
-		float requiredHeight= GUI.skin.label.CalcHeight( new GUIContent(rules), Screen.width- boardEdge.x - view.getCellSize());
+		float requiredHeight= GUI.skin.label.CalcHeight( new GUIContent(rules), Screen.width- boardEdge.x - defaultView.getCellSize());
 		if(requiredHeight <= Screen.height-boardEdge.y) {
-			GUI.Label(new Rect(boardEdge.x, boardEdge.y, Screen.width- boardEdge.x - view.getCellSize(), Screen.height-boardEdge.y), rules);
+			GUI.Label(new Rect(boardEdge.x, boardEdge.y, Screen.width- boardEdge.x - defaultView.getCellSize(), Screen.height-boardEdge.y), rules);
 		}
 		else {
-			scrollRules= GUI.BeginScrollView(new Rect(boardEdge.x, boardEdge.y, Screen.width- boardEdge.x - view.getCellSize(), Screen.height-boardEdge.y),
-			                             scrollRules, new Rect(boardEdge.x, boardEdge.y, Screen.width- boardEdge.x - view.getCellSize()-15, requiredHeight));
+			scrollRules= GUI.BeginScrollView(new Rect(boardEdge.x, boardEdge.y, Screen.width- boardEdge.x - defaultView.getCellSize(), Screen.height-boardEdge.y),
+			                                 scrollRules, new Rect(boardEdge.x, boardEdge.y, Screen.width- boardEdge.x - defaultView.getCellSize()-15, requiredHeight));
 			
-			GUI.Label(new Rect(boardEdge.x, boardEdge.y, (Screen.width- boardEdge.x - view.getCellSize()-15), requiredHeight), rules);
+			GUI.Label(new Rect(boardEdge.x, boardEdge.y, (Screen.width- boardEdge.x - defaultView.getCellSize()-15), requiredHeight), rules);
 			
 			GUI.EndScrollView();
 		}

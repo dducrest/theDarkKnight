@@ -51,22 +51,24 @@ public class Piece {
 	}
 }
 
-public class Enemy: Piece {
+public class ActivePiece: Piece {
 	
-	protected Enemy(): base() {
+	protected ActivePiece(): base() {
 		
 	}
 	
-	protected Enemy( PieceType type, int col, int row, EnemyState state= EnemyState.IDLE): base(type, col, row) {
+	protected ActivePiece( PieceType type, int col, int row, ActivePieceState state= ActivePieceState.IDLE): base(type, col, row) {
 		State = state;
 	}
 
-	public enum EnemyState { IDLE, ALERT };
-	public EnemyState State {
+	public enum ActivePieceState { IDLE, ALERT, DEAD };
+	public ActivePieceState State {
 		get { return state; }
-		set { state = value; }
+		set { state = value;
+		//	Debug.Log (this.Type.ToString() + "Change State to: " + state.ToString());
+		}
 	}
-	protected EnemyState state= EnemyState.IDLE;
+	protected ActivePieceState state= ActivePieceState.IDLE;
 	
 	public Vector2 TargetPos {
 		get { return targetPos; }
@@ -76,8 +78,10 @@ public class Enemy: Piece {
 	
 	protected override bool canBeInCell(Board board, Vector2 pos) {
 		Piece p= board.getPieceAt(pos);
-		
-		return (p == this || p == board.getBatman() || p == null );
+		if(p is ActivePiece)
+			return (p == this || ((ActivePiece)p).State == ActivePiece.ActivePieceState.DEAD || p == board.getBatman() || p == null );
+		else 
+			return true;
 	}
 	
 }
